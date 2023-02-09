@@ -5,7 +5,7 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.android.tools.build:gradle:7.2.1"
+    classpath "com.android.tools.build:gradle:7.2.2"
   }
 }
 
@@ -55,14 +55,26 @@ android {
 repositories {
   mavenCentral()
   google()
+  exclusiveContent {
+    filter {
+      includeGroup "com.facebook.react"
+    }
+    forRepository {
+      maven {
+        url "$rootDir/../node_modules/react-native/android"
+      }
+    }
+  }
+
 }
 
+def REACT_NATIVE_VERSION = new File(['node', '--print',"JSON.parse(require('fs').readFileSync(require.resolve('react-native/package.json'), 'utf-8')).version"].execute(null, rootDir).text.trim())
 
 dependencies {
   // For < 0.71, this will be from the local maven repo
   // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
   //noinspection GradleDynamicVersion
-  implementation "com.facebook.react:react-native"
+  implementation "com.facebook.react:react-native:" + REACT_NATIVE_VERSION
 }
 
 if (isNewArchitectureEnabled()) {
